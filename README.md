@@ -71,7 +71,7 @@ cp .env
 - MODEL_NAME=llama-3.1-8b-instant
 
 **4) (Optional) Ingest local docs for RAG**
-python -m src.ingest --docs data/docs --index data/index
+- python -m src.ingest --docs data/docs --index data/index
 
 **5) Run agent via CLI**
 python -m src.app chat "What is the capital of France?"
