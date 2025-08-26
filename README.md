@@ -85,7 +85,7 @@ python -m src.agent.eval.gsm8k_eval
 python manage.py runserver
 **→ Visit http://127.0.0.1:8000**
 
-**Directory structure:**
+Directory structure:
 └── mohmujeeb-astramind/
     ├── README.md
     ├── LICENSE
