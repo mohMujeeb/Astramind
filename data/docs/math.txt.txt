@@ -1,0 +1,4 @@
+The Pythagorean theorem states that in a right triangle, the square of the hypotenuse is equal to the sum of the squares of the other two sides. 
+It is written as a^2 + b^2 = c^2.
+
+Prime numbers are natural numbers greater than 1 that have no positive divisors other than 1 and themselves. Examples include 2, 3, 5, 7, and 11.

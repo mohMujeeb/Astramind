@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>AstraMind — Docs</title>
+    {% load static %}
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'favicons/favicon.svg' %}">
+    <link rel="icon" href="{% static 'favicons/favicon.ico' %}" sizes="any">
+    <link rel="apple-touch-icon" href="{% static 'favicons/favicon-192.png' %}">
+    <meta name="theme-color" content="#000000">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: { extend: { fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'] } } }
+      };
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
+
+    <style>
+      html { scroll-behavior: smooth; }
+      /* account for sticky header when jumping to anchors */
+      :target { scroll-margin-top: 96px; }
+      .prose :where(code){ background: rgba(0,0,0,.05); padding:.1rem .35rem; border-radius:.35rem; }
+      .prose pre code{ background: transparent; padding: 0; }
+    </style>
+  </head>
+
+  <body class="h-full bg-white text-gray-900 dark:bg-black dark:text-gray-100 font-sans">
+    <!-- Header -->
+    <header class="sticky top-0 z-30 border-b border-black/[.06] dark:border-white/[.08] bg-white/80 dark:bg-black/80 backdrop-blur">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+        <a href="{% url 'home' %}" class="text-[20px] font-semibold tracking-tight leading-none hover:opacity-80">AstraMind</a>
+        <div class="ml-auto flex items-center gap-2">
+          <a href="{% url 'chat_page' %}" class="rounded-full px-4 py-2 text-sm font-medium bg-black text-white dark:bg-white dark:text-black hover:opacity-90">Try AstraMind</a>
+          <button id="btn-theme" class="h-8 w-8 rounded-full text-xl grid place-items-center hover:bg-black/[.04] dark:hover:bg-white/[.06]" title="Toggle theme">🌙</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Layout -->
+    <main class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-[220px,1fr] gap-10 pb-24">
+      <!-- Left rail -->
+      <aside class="hidden md:block w-56">
+        <div class="sticky top-[96px]">
+          <div class="flex flex-col justify-start min-h-[calc(100vh-96px)]">
+            <ul class="space-y-3 text-[15px] text-gray-700 dark:text-gray-300">
+              <li><a class="hover:text-black dark:hover:text-white" href="#overview">Overview</a></li>
+              <li><a class="hover:text-black dark:hover:text-white" href="#stack">Tech Stack</a></li>
+              <li><a class="hover:text-black dark:hover:text-white" href="#architecture">System Architecture</a></li>
+              <li><a class="hover:text-black dark:hover:text-white" href="#rag">RAG & User Docs</a></li>
+              <li><a class="hover:text-black dark:hover:text-white" href="#controller">Controller & Planning</a></li>
+              <li><a class="hover:text-black dark:hover:text-white" href="#evaluation">Evaluation</a></li>
+              <li><a class="hover:text-black dark:hover:text-white" href="#routes">Routes & API</a></li>
+              <li><a class="hover:text-black dark:hover:text-white" href="#config">Configuration</a></li>
+              <li><a class="hover:text-black dark:hover:text-white" href="#persistence">Data & Persistence</a></li>
+              <li><a class="hover:text-black dark:hover:text-white" href="#faq">FAQ</a></li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Content -->
+      <section class="prose dark:prose-invert max-w-none">
+        <h1 id="overview">Overview</h1>
+        <br/>
+        <p>
+          AstraMind is a tool-calling AI agent that performs task decomposition and dynamic tool selection.
+          It routes queries across <strong>Web Search</strong>, <strong>Calculator</strong>, <strong>GSM8K Solver</strong>, and
+          <strong>RAG</strong> (local document Q&A), orchestrated by a rule-guided controller.
+        </p>
+        <br/>
+        <div class="grid sm:grid-cols-2 gap-4 not-prose">
+          <div class="rounded-2xl border border-black/10 dark:border-white/15 p-4">
+            <h3 class="text-sm font-semibold mb-1">Key Capabilities</h3>
+            <ul class="list-disc pl-5 text-sm space-y-1">
+              <li>JSON planning controller with validation & fallback routing</li>
+              <li>Live search for fresh facts; numeric reasoning via calculator & GSM8K</li>
+              <li>Per-session RAG on user-uploaded PDF/TXT/MD</li>
+              <li>Memory: last numbers, entities, and durable facts</li>
+            </ul>
+          </div>
+          <div class="rounded-2xl border border-black/10 dark:border-white/15 p-4">
+            <h3 class="text-sm font-semibold mb-1">Focus</h3>
+            <ul class="list-disc pl-5 text-sm space-y-1">
+              <li>Systems integration & prompt engineering</li>
+              <li>Benchmarking with LAMA & GSM8K subsets</li>
+              <li>Fine-tuning for math reasoning</li>
+            </ul>
+          </div>
+        </div>
+        <br/>
+        <h2 id="stack">Tech Stack</h2>
+        <br/>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 not-prose">
+          <div class="rounded-2xl border border-black/10 dark:border-white/15 p-4">
+            <div class="text-xs uppercase text-gray-500 mb-1">Orchestration</div>
+            <div class="font-semibold">LangGraph</div>
+            <p class="text-sm mt-1">State machine to run the controller and tools.</p>
+          </div>
+          <div class="rounded-2xl border border-black/10 dark:border-white/15 p-4">
+            <div class="text-xs uppercase text-gray-500 mb-1">Web</div>
+            <div class="font-semibold">Django</div>
+            <p class="text-sm mt-1">API endpoints, session scoping, and UI templates.</p>
+          </div>
+          <div class="rounded-2xl border border-black/10 dark:border-white/15 p-4">
+            <div class="text-xs uppercase text-gray-500 mb-1">Model Host</div>
+            <div class="font-semibold">Groq (OpenAI-compatible)</div>
+            <p class="text-sm mt-1">Fast LLM inference via OpenAI-style client.</p>
+          </div>
+          <div class="rounded-2xl border border-black/10 dark:border-white/15 p-4">
+            <div class="text-xs uppercase text-gray-500 mb-1">Databases</div>
+            <div class="font-semibold">PostgreSQL</div>
+            <p class="text-sm mt-1">Conversations, memory items, and audit traces.</p>
+          </div>
+        </div>
+        <br/>
+        <h2 id="architecture">System Architecture</h2>
+        <br/>
+        <p>High-level flow:</p>
+        <ol>
+          <li><strong>Controller</strong> receives the user query and proposes a step plan in JSON.</li>
+          <li>Plan is <strong>validated</strong> (tool allow-list, input relevance, banned prompts).</li>
+          <li>If invalid, a <strong>deterministic fallback</strong> splits the query and routes by rules.</li>
+          <li>Each step calls a <strong>tool</strong> (web, calculator, GSM8K, rag) and appends to the trace.</li>
+          <li>Final response is rendered from step outputs; memory is updated opportunistically.</li>
+        </ol>
+        <br/>
+        <div class="rounded-2xl border border-black/10 dark:border-white/15 p-4 not-prose">
+          <h3 class="text-sm font-semibold mb-2">Tools</h3>
+          <ul class="list-disc pl-5 text-sm space-y-1">
+            <li><strong>Web Search</strong> - Tavily → synthesize answer with inline citations.</li>
+            <li><strong>Calculator</strong> - Safe arithmetic & formatting.</li>
+            <li><strong>GSM8K Solver</strong> - LLM-guided math word problems.</li>
+            <li><strong>RAG</strong> - FAISS + Sentence-transformers over session-scoped uploads.</li>
+          </ul>
+        </div>
+        <br/>
+        <h2 id="rag">RAG & User Documents</h2>
+        <br/>
+        <p>
+          Users can upload <strong>.pdf/.txt/.md</strong> which are stored under a per-session folder and indexed
+          into FAISS. Queries can be routed to RAG explicitly (e.g., “According to our local docs, …”) or by checking
+          “Use my docs” on the chat UI.
+        </p>
+        <div class="grid sm:grid-cols-2 gap-4 not-prose">
+          <div class="rounded-2xl border border-black/10 dark:border-white/15 p-4">
+            <h4 class="text-sm font-semibold mb-1">Ingestion</h4>
+            <pre class="text-xs"><code>python -m src.ingest --docs data/docs --index data/index
+                <br/>
+data/user_docs/&lt;session&gt;/  →  data/user_index/&lt;session&gt;/</code></pre>
+          </div>
+          <div class="rounded-2xl border border-black/10 dark:border-white/15 p-4">
+            <h4 class="text-sm font-semibold mb-1">Query Path</h4>
+            <ol class="text-sm list-decimal pl-5 space-y-1">
+              <li>Controller detects doc-preface or UI meta flag.</li>
+              <li>Retrieve top-k chunks from FAISS.</li>
+              <li>LLM answers strictly from contexts; falls back to web if unknown.</li>
+            </ol>
+          </div>
+        </div>
+        <br/>
+        <h2 id="controller">Controller & Planning</h2>
+        <br/>
+        <p>
+          The controller first attempts JSON planning with the LLM using a <em>controller prompt</em>.
+          Plans are validated (tool allow-list, relevance, banned patterns). If invalid, the fallback
+          splitter routes sub-queries: math → calculator, narrative math → GSM8K, doc-preface → RAG,
+          otherwise prefer Web.
+        </p>
+        <ul>
+            <br/>
+          <li><strong>Entity/number memory</strong> helps rewrite follow-ups (e.g., “add 5 to it”).</li>
+          <li><strong>Durable facts</strong> (web/rag) are stored under namespaces like <code>web.fact</code>.</li>
+        </ul>
+        <br/>
+        <h2 id="evaluation">Evaluation</h2>
+        <p>
+          Bootcamp evaluation uses curated mini-splits:
+        </p>
+        <ul>
+          <li><strong>LAMA subset</strong> → factual recall</li>
+          <li><strong>GSM8K subset</strong> → reasoning accuracy</li>
+        </ul>
+        <br/>
+        <pre><code class="language-bash">bash scripts/run_benchmarks.sh
+python -m src.agent.eval.lama_eval
+python -m src.agent.eval.gsm8k_eval</code></pre>
+            <br/>
+        <h2 id="routes">Routes & API</h2>
+        <br/>
+        <table>
+          <thead>
+            <tr><th>Route</th><th>Method</th><th>Description</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/</code></td><td>GET</td><td>Landing page</td></tr>
+            <tr><td><code>/agent/</code></td><td>GET</td><td>Chat UI (empty on refresh)</td></tr>
+            <tr><td><code>/agent/api/</code></td><td>POST (JSON)</td><td>Chat message → controller → response</td></tr>
+            <tr><td><code>/agent/upload/</code></td><td>POST (multipart)</td><td>Upload & index .pdf/.txt/.md</td></tr>
+            <tr><td><code>/agent/clear-docs/</code></td><td>POST</td><td>Delete session docs & index</td></tr>
+          </tbody>
+        </table>
+        <br/>
+        <h2 id="config">Configuration</h2>
+        <br/>
+        <p><em>.env keys:</em></p>
+        <pre><code>OPENAI_API_KEY=...
+OPENAI_BASE_URL=https://api.groq.com/openai/v1
+MODEL_NAME=llama-3.1-8b-instant
+TAVILY_API_KEY=...
+EMBEDDINGS_MODEL=sentence-transformers/all-MiniLM-L6-v2
+# Optional: override base index (CLI)
+INDEX_DIR=data/index
+</code></pre>
+        <br/>
+        <h2 id="persistence">Data & Persistence</h2>
+        <ul>
+          <li><strong>PostgreSQL</strong>: conversations, messages, memory items (thread/user/session scope).</li>
+          <li><strong>Per-session files</strong>: <code>data/user_docs/&lt;session&gt;/</code> and <code>data/user_index/&lt;session&gt;/</code>.</li>
+          <li><strong>Memory</strong>: numeric last value, entity hints, and durable facts stored with constraints.</li>
+        </ul>
+        <br/>
+        <h2 id="faq">FAQ</h2>
+        <br/>
+        <details>
+          <summary><strong>How does “Use my docs” work?</strong></summary>
+          <div class="mt-2 text-sm">
+            The chat request carries a meta flag and a doc-preface to steer the controller into the RAG tool.
+            Retrieval is limited to the current session’s FAISS index.
+          </div>
+        </details>
+        <details>
+          <summary><strong>What if no RAG context matches?</strong></summary>
+          <div class="mt-2 text-sm">
+            The controller falls back to web search (if configured) or returns “I don’t know based on local documents”.
+          </div>
+        </details>
+        <details>
+          <summary><strong>Can I swap search providers?</strong></summary>
+          <div class="mt-2 text-sm">
+            Yes—edit the web search tool; the controller is provider-agnostic.
+          </div>
+        </details>
+
+        <div class="mt-10 not-prose">
+          <a href="{% url 'chat_page' %}" class="rounded-full px-5 py-3 text-sm font-medium bg-black text-white dark:bg-white dark:text-black hover:opacity-90">
+            Try AstraMind
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      document.getElementById('btn-theme').addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      });
+    </script>
+  </body>
+</html>

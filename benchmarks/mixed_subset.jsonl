@@ -1,0 +1,5 @@
+{"question": "5*12 and who is the CEO of Tesla?", "expect": {"must_contain": ["60", "elon"], "web_any": ["elon musk"]}}
+{"question": "Square root of 144 and what is the capital of Canada?", "expect": {"must_contain": ["12", "ottawa"], "web_any": ["ottawa"]}}
+{"question": "A train travels 60 km in 1 hour. How long will it take to travel 150 km? And who is the current UN Secretary-General?", "expect": {"must_contain": ["2.5", "guterres"], "web_any": ["antónio guterres", "antonio guterres"]}}
+{"question": "If Sara has 3 times more candies than Ali, and Ali has 15, how many does Sara have? Also, what is the capital of France?", "expect": {"must_contain": ["45", "paris"], "web_any": ["paris"]}}
+{"question": "10! and who founded Microsoft?", "expect": {"must_contain": ["3628800", "gates"], "web_any": ["bill gates", "bill gates and paul allen", "paul allen"]}}

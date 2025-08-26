@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>AstraMind</title>
+    {% load static %}
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'favicons/favicon.svg' %}">
+    <link rel="icon" href="{% static 'favicons/favicon.ico' %}" sizes="any">
+    <link rel="apple-touch-icon" href="{% static 'favicons/favicon-192.png' %}">
+    <meta name="theme-color" content="#000000">
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: { extend: { fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'] } } }
+      };
+      const theme = localStorage.getItem('theme');
+      if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
+
+    <!-- Markdown + Sanitizer -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+    <script>marked.setOptions({ gfm: true, breaks: true });</script>
+  </head>
+
+  <body class="h-full bg-white text-gray-900 dark:bg-black dark:text-gray-100 font-sans">
+    <!-- Header -->
+    <header class="sticky top-0 z-30 border-b border-black/[.06] dark:border-white/[.08] bg-white/80 dark:bg-black/80 backdrop-blur">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-4">
+        <a href="{% url 'home' %}" class="text-[20px] font-semibold tracking-tight leading-none hover:opacity-80">AstraMind</a>
+        <div class="ml-auto flex items-center gap-2">
+          <button id="btn-theme" class="h-8 w-8 rounded-full text-xl grid place-items-center hover:bg-black/[.04] dark:hover:bg-white/[.06]" title="Toggle theme">🌙</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Layout -->
+    <main class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-[220px,1fr] gap-10 pb-20">
+      <!-- Left rail (sticky + vertically centered under header) -->
+      <aside class="hidden md:block w-56">
+        <!-- Adjust top-[96px] if your header height changes -->
+        <div class="sticky top-[96px]">
+          <div class="flex flex-col justify-center min-h-[calc(100vh-96px)]">
+            <ul class="space-y-4 text-[15px] text-gray-700 dark:text-gray-300">
+              <li>
+                <button id="btn-history"
+                        class="block w-full text-left appearance-none bg-transparent px-0 py-1
+                               text-gray-700 hover:text-black focus:outline-none
+                               dark:text-gray-300 dark:hover:text-white">History</button>
+              </li>
+              <li>
+                <button id="btn-memory"
+                        class="block w-full text-left appearance-none bg-transparent px-0 py-1
+                               text-gray-700 hover:text-black focus:outline-none
+                               dark:text-gray-300 dark:hover:text-white">Stored Data</button>
+              </li>
+              <li>
+                <button id="btn-clear"
+                        class="block w-full text-left appearance-none bg-transparent px-0 py-1
+                               text-gray-700 hover:text-black focus:outline-none
+                               dark:text-gray-300 dark:hover:text-white">Clear Memory</button>
+              </li>
+            </ul>
+
+            <!-- Upload & Index -->
+            <div class="mt-8 rounded-2xl border border-black/10 dark:border-white/15 p-4">
+              <h3 class="text-sm font-semibold mb-2">My Docs (PDF / TXT / MD)</h3>
+              <input id="doc-files" type="file" accept=".pdf,.txt,.md" multiple
+                     class="block w-full text-sm file:mr-3 file:rounded-md file:border file:border-black/10 dark:file:border-white/15
+                            file:px-3 file:py-1.5 file:bg-white dark:file:bg-white/10 file:hover:bg-black/[.04] file:cursor-pointer" />
+              <div class="mt-3 flex gap-2">
+                <button id="btn-upload" class="rounded-full px-3 py-1.5 text-sm border border-black/10 dark:border-white/15 hover:bg-black/[.04] dark:hover:bg-white/[.06]">Upload & Index</button>
+                <button id="btn-clear-docs" class="rounded-full px-3 py-1.5 text-sm border border-black/10 dark:border-white/15 hover:bg-black/[.04] dark:hover:bg-white/[.06]">Clear My Docs</button>
+              </div>
+              <p id="upload-status" class="mt-2 text-xs text-gray-500 dark:text-gray-400"></p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Content -->
+      <section id="chat" class="grid gap-8">
+        <!-- Suggestions -->
+        <div id="examples" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {% comment %} <button data-suggest="2+2" class="sugg">2 + 2</button>
+          <button data-suggest="add 4 into it" class="sugg">Add 4 Into It</button>
+          <button data-suggest="A train travels 60 km in 1 hour. How long to travel 150 km?" class="sugg">GSM8K Sample</button>
+          <button data-suggest="According to our local docs, what is the height of Mount Everest in meters?" class="sugg">RAG Sample</button> {% endcomment %}
+        </div>
+
+        <!-- Chat log (empty on first load) -->
+        <section id="log" class="min-h-[50vh] grid gap-6"></section>
+
+        <!-- Composer -->
+        <section class="sticky bottom-0 pt-3">
+          <form id="chat-form" class="flex items-end gap-3">
+            <textarea id="msg" rows="1" placeholder="Type a message… (Shift+Enter = newline)"
+              class="flex-1 resize-none rounded-2xl border border-black/10 dark:border-white/15 bg-white dark:bg-white/[.02] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-black/60 dark:focus:ring-white/60"></textarea>
+            <label class="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
+              <input id="use-docs" type="checkbox" class="h-4 w-4 rounded border-gray-300 dark:border-gray-600">
+              Use my docs
+            </label>
+            <button id="send-btn" type="submit"
+              class="inline-flex items-center gap-2 rounded-full bg-black hover:opacity-90 text-white px-5 py-3 font-medium dark:bg-white dark:text-black">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 -mt-0.5" viewBox="0 0 24 24" fill="currentColor"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+              Send
+            </button>
+          </form>
+          <p id="hint" class="mt-2 text-xs text-gray-500 dark:text-gray-400"></p>
+        </section>
+      </section>
+    </main>
+
+    <style>
+      .sugg{
+        @apply rounded-2xl border border-black/10 dark:border-white/15 px-3 py-2 text-sm text-left hover:bg-black/[.04] dark:hover:bg-white/[.06];
+      }
+      .prose :where(code){ background: rgba(0,0,0,.05); padding:.1rem .35rem; border-radius:.35rem; }
+      .prose pre code{ background: transparent; padding: 0; }
+    </style>
+
+    <script>
+      const API_URL = "/agent/api/";
+      const UPLOAD_URL = "/agent/upload/";
+      const CLEAR_DOCS_URL = "/agent/clear-docs/";
+
+      // Theme toggle
+      document.getElementById('btn-theme').addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      });
+
+      // Elements
+      const formEl = document.getElementById('chat-form');
+      const msg    = document.getElementById('msg');
+      const log    = document.getElementById('log');
+      const hint   = document.getElementById('hint');
+
+      // Suggestions
+      document.querySelectorAll('[data-suggest]').forEach(el=>{
+        el.addEventListener('click', ()=>{
+          msg.value = el.dataset.suggest;
+          msg.focus();
+        });
+      });
+
+      // --- Markdown helpers (incl. ASCII table -> GFM) ---
+      function asciiTablesToGfm(mdText) {
+        if (!mdText || mdText.indexOf('|') === -1) return mdText;
+        const lines = mdText.split(/\r?\n/);
+        const out = [];
+        let i = 0;
+
+        function looksLikeSep(line) {
+          return /[-+|]{3,}/.test(line) && (line.includes('+') || (line.match(/\|/g) || []).length >= 1);
+        }
+
+        while (i < lines.length) {
+          if (lines[i].includes('|')) {
+            let block = [];
+            while (i < lines.length && (lines[i].includes('|') || looksLikeSep(lines[i]))) {
+              block.push(lines[i]); i++;
+            }
+            const hasSep = block.some(looksLikeSep);
+            if (hasSep && block.length >= 2) {
+              const rows = block
+                .filter(l => l.includes('|') && !looksLikeSep(l))
+                .map(l => l.split('|').map(c => c.trim()))
+                .map(cols => { if (cols[0]==='') cols.shift(); if (cols.at(-1)==='') cols.pop(); return cols; })
+                .filter(cols => cols.length > 0);
+              if (rows.length) {
+                const headers = rows[0];
+                const gfm = [];
+                gfm.push('| ' + headers.join(' | ') + ' |');
+                gfm.push('| ' + headers.map(()=> '---').join(' | ') + ' |');
+                for (let r=1;r<rows.length;r++){
+                  const row = [...rows[r]];
+                  while (row.length < headers.length) row.push('');
+                  gfm.push('| ' + row.slice(0, headers.length).join(' | ') + ' |');
+                }
+                out.push(...gfm); continue;
+              }
+            }
+            out.push(...block);
+          } else {
+            out.push(lines[i]); i++;
+          }
+        }
+        return out.join('\n');
+      }
+
+      function renderMarkdownInto(el, text){
+        const pre = asciiTablesToGfm(text ?? '');
+        el.innerHTML = DOMPurify.sanitize(marked.parse(pre));
+
+        // Table polish
+        el.querySelectorAll('table').forEach(t=>{
+          t.classList.add('w-full','text-sm','border','border-black/10','dark:border-white/15','rounded-lg','overflow-hidden');
+          if (!t.parentElement.classList.contains('overflow-auto')) {
+            const wrap = document.createElement('div');
+            wrap.className = 'overflow-auto'; t.parentNode.insertBefore(wrap, t); wrap.appendChild(t);
+          }
+          t.querySelectorAll('th,td').forEach(c=>c.classList.add('px-3','py-2','border','border-black/10','dark:border-white/15','align-top'));
+          t.querySelectorAll('th').forEach(h=>h.classList.add('bg-gray-50','dark:bg-white/[.06]','font-semibold','text-gray-700','dark:text-gray-100'));
+        });
+
+        el.querySelectorAll('code').forEach(c=>c.classList.add('rounded','px-1.5','py-0.5'));
+        el.querySelectorAll('pre').forEach(p=>p.classList.add('rounded-lg','p-3','border','border-black/10','dark:border-white/15'));
+      }
+
+      // --- Chat bubble + network (labels: "User" / "Agent") ---
+      function bubble(role, content, trace, rewritten) {
+        const wrap = document.createElement('div');
+        wrap.className = 'msg ' + role + ' grid gap-2';
+
+        const meta = document.createElement('div');
+        meta.className = 'flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400';
+
+        const badge = document.createElement('span');
+        badge.className =
+          'inline-flex items-center justify-center h-6 rounded-lg px-3 text-[11px] font-semibold ' +
+          (role === 'user'
+            ? 'bg-black text-white dark:bg-white dark:text-black'
+            : 'bg-emerald-600 text-white');
+        badge.textContent = (role === 'user') ? 'User' : 'Agent';
+        meta.appendChild(badge);
+
+        const ts = document.createElement('span');
+        ts.textContent = new Date().toLocaleTimeString();
+        meta.appendChild(ts);
+
+        if (rewritten){
+          const chip = document.createElement('span');
+          chip.className = 'text-[11px] rounded-md px-2 py-0.5 bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200';
+          chip.textContent = 'rewritten: ' + rewritten;
+          meta.appendChild(chip);
+        }
+
+        const box = document.createElement('div');
+        box.className =
+          'rounded-2xl p-5 prose dark:prose-invert max-w-none border border-black/10 dark:border-white/15 ' +
+          (role === 'user' ? 'bg-gray-50 dark:bg-white/[.03]' : 'bg-white dark:bg-white/[.02]');
+
+        renderMarkdownInto(box, content);
+
+        wrap.appendChild(meta);
+        wrap.appendChild(box);
+
+        if (trace && trace.length) {
+          const det = document.createElement('details');
+          det.className = 'mt-1';
+          const sum = document.createElement('summary');
+          sum.className = 'text-xs text-gray-500 hover:underline cursor-pointer';
+          sum.textContent = 'Tool trace';
+          const pre = document.createElement('pre');
+          pre.className = 'text-xs bg-gray-50 dark:bg-white/[.06] rounded-lg p-3 overflow-x-auto';
+          pre.textContent = JSON.stringify(trace, null, 2);
+          det.appendChild(sum); det.appendChild(pre);
+          wrap.appendChild(det);
+        }
+
+        log.appendChild(wrap);
+        window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+      }
+
+      function setBusy(v) {
+        const btn = document.getElementById('send-btn');
+        btn.disabled = v;
+        btn.classList.toggle('opacity-60', v);
+        hint.textContent = v ? 'Thinking…' : '';
+      }
+
+      // Send helper with optional meta payload (e.g., useUserDocs, historyLimit)
+      async function send(message, extra = null) {
+        bubble('user', message);
+        setBusy(true);
+        try {
+          const body = extra ? { message, meta: extra } : { message };
+          const res = await fetch(API_URL, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(body)
+          });
+          const data = await res.json();
+          if (res.ok) {
+            bubble('agent', data.final || '(no answer)', data.trace, data.rewritten);
+          } else {
+            bubble('agent', 'Error: ' + (data.error || 'Unknown error'));
+          }
+        } catch (err) {
+          bubble('agent', 'Network error. Is the server running?');
+        } finally {
+          setBusy(false);
+        }
+      }
+
+      // Form submit
+      formEl.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = msg.value.trim();
+        if (!text) return;
+        msg.value = '';
+        const useDocs = document.getElementById('use-docs').checked;
+        const meta = useDocs ? { useUserDocs: true } : null;
+        send(text, meta);
+      });
+
+      // Left-rail actions
+      document.getElementById('btn-history').onclick = () => {
+        send('give me my history (last 10)', { historyLimit: 10 });
+      };
+      document.getElementById('btn-memory').onclick  = () => { send('what data you have stored'); };
+      document.getElementById('btn-clear').onclick   = () => { send('clear memory'); };
+
+      // Upload & Index
+      document.getElementById('btn-upload').onclick = async () => {
+        const files = document.getElementById('doc-files').files;
+        const status = document.getElementById('upload-status');
+        if (!files || !files.length) { status.textContent = 'Select PDF/TXT/MD files first.'; return; }
+        const fd = new FormData();
+        Array.from(files).forEach(f => fd.append('files', f));
+        status.textContent = 'Uploading & indexing…';
+        try {
+          const res = await fetch(UPLOAD_URL, { method: 'POST', body: fd });
+          const data = await res.json();
+          status.textContent = res.ok ? `Indexed ${data.indexed} file(s).` : `Error: ${data.error || 'upload failed'}`;
+        } catch (e) {
+          status.textContent = 'Network error during upload.';
+        }
+      };
+
+      // Clear My Docs
+      document.getElementById('btn-clear-docs').onclick = async () => {
+        const status = document.getElementById('upload-status');
+        status.textContent = 'Clearing…';
+        try {
+          const res = await fetch(CLEAR_DOCS_URL, { method: 'POST' });
+          const data = await res.json();
+          status.textContent = res.ok ? `Removed ${data.removed_dirs} folder(s).` : `Error: ${data.error || 'clear failed'}`;
+        } catch (e) {
+          status.textContent = 'Network error clearing docs.';
+        }
+      };
+
+      // Page title
+      document.title = 'Introducing — AstraMind';
+    </script>
+  </body>
+</html>

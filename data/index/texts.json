@@ -1,0 +1,34 @@
+{
+  "texts": [
+    "France is a country in Western Europe. Its capital city is Paris, which is also the country's largest city. Paris is often called \\\"The City of Light\\\" and is famous for landmarks such as the Eiffel Tower, the Louvre Museum, and the River Seine.\n\nFrance has a population of about 67 million people. The official language is French, and the currency is the Euro (€). The current form of government is a unitary semi-presidential republic.\n\nImportant facts about France:\n- Capital: Paris\n- Official Lan",
+    "a unitary semi-presidential republic.\n\nImportant facts about France:\n- Capital: Paris\n- Official Language: French\n- Currency: Euro\n- Famous Landmarks: Eiffel Tower, Louvre, Notre-Dame Cathedral",
+    "Mount Everest, located in the Himalayas, is the tallest mountain in the world with a height of 8,848 meters (29,029 feet). \nThe Amazon River in South America is the largest river by discharge volume of water.\n\nAfrica is the second-largest continent in the world. It is home to the Sahara Desert, the largest hot desert on Earth, and the Nile River, the longest river in the world.\n",
+    "The Roman Empire was one of the most powerful civilizations in history, lasting from 27 BCE to 476 CE in the West. \nIts capital was Rome, and later Constantinople in the Eastern Empire. Julius Caesar, Augustus, and Constantine were among its most famous leaders.\n\nThe French Revolution began in 1789 and marked a turning point in European history. It led to the end of monarchy in France and the rise of Napoleon Bonaparte.\n",
+    " of Napoleon Bonaparte.\n",
+    "The Pythagorean theorem states that in a right triangle, the square of the hypotenuse is equal to the sum of the squares of the other two sides. \nIt is written as a^2 + b^2 = c^2.\n\nPrime numbers are natural numbers greater than 1 that have no positive divisors other than 1 and themselves. Examples include 2, 3, 5, 7, and 11.\n",
+    "Water (H2O) is composed of two hydrogen atoms and one oxygen atom. It exists in three states: solid (ice), liquid (water), and gas (vapor). \nThe boiling point of water at sea level is 100°C, and its freezing point is 0°C.\n\nAlbert Einstein developed the theory of relativity, with the famous equation E=mc^2. This showed the relationship between energy, mass, and the speed of light.\n"
+  ],
+  "meta": [
+    {
+      "source": "data\\docs\\france.txt"
+    },
+    {
+      "source": "data\\docs\\france.txt"
+    },
+    {
+      "source": "data\\docs\\geography.txt"
+    },
+    {
+      "source": "data\\docs\\history.txt"
+    },
+    {
+      "source": "data\\docs\\history.txt"
+    },
+    {
+      "source": "data\\docs\\math.txt.txt"
+    },
+    {
+      "source": "data\\docs\\science.txt"
+    }
+  ]
+}
