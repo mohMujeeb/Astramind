@@ -85,25 +85,93 @@ python -m src.agent.eval.gsm8k_eval
 python manage.py runserver
 **→ Visit http://127.0.0.1:8000**
 
-**Project Layout**
-AstraMind/
-├─ benchmarks/                 Benchmark subsets (LAMA, GSM8K, mixed)
-├─ bootcamp/agent/             Django app: models, views, templates, static assets
-│  ├─ templates/chat/          Frontend templates (index, landing, about)
-│  ├─ models.py                PostgreSQL memory schema
-│  ├─ memory.py                Memory logic
-│  ├─ views.py / urls.py       Django views & routing
-│  └─ admin.py                 Django admin
-├─ data/
-│  ├─ docs/                    Knowledge base documents
-│  └─ index/                   FAISS vector store
-├─ scripts/                    Benchmark runner scripts
-├─ src/agent/                  Core agent logic
-│  ├─ tools/                   Tool implementations (calc, web, rag, gsm8k)
-│  ├─ controller.py            Controller logic
-│  ├─ graph.py                 LangGraph orchestration
-│  └─ eval/                    Evaluation scripts
-└─ requirements.txt
+**Directory structure:**
+└── mohmujeeb-astramind/
+    ├── README.md
+    ├── LICENSE
+    ├── requirements.txt
+    ├── benchmarks/
+    │   ├── gsm8k_subset.jsonl
+    │   ├── lama_subset.csv
+    │   └── mixed_subset.jsonl
+    ├── bootcamp/
+    │   ├── manage.py
+    │   ├── agent/
+    │   │   ├── __init__.py
+    │   │   ├── admin.py
+    │   │   ├── agent_bridge.py
+    │   │   ├── apps.py
+    │   │   ├── memory.py
+    │   │   ├── models.py
+    │   │   ├── tests.py
+    │   │   ├── urls.py
+    │   │   ├── views.py
+    │   │   ├── migrations/
+    │   │   │   ├── 0001_initial.py
+    │   │   │   └── __init__.py
+    │   │   └── templates/
+    │   │       └── chat/
+    │   │           ├── about.html
+    │   │           ├── index.html
+    │   │           └── landing.html
+    │   ├── bootcamp/
+    │   │   ├── __init__.py
+    │   │   ├── asgi.py
+    │   │   ├── settings.py
+    │   │   ├── urls.py
+    │   │   └── wsgi.py
+    │   └── data/
+    │       ├── user_docs/
+    │       │   ├── gjapiyhp2r925t2dog0scs0qyr3fn1og/
+    │       │   │   └── france.txt
+    │       │   └── l2xuejybngxdvg4ok2w4h7a2s4zr8o61/
+    │       │       └── france.txt
+    │       └── user_index/
+    │           ├── gjapiyhp2r925t2dog0scs0qyr3fn1og/
+    │           │   ├── faiss.index
+    │           │   ├── texts.json
+    │           │   └── vectors.npy
+    │           └── l2xuejybngxdvg4ok2w4h7a2s4zr8o61/
+    │               ├── faiss.index
+    │               ├── texts.json
+    │               └── vectors.npy
+    ├── data/
+    │   ├── docs/
+    │   │   ├── france.txt
+    │   │   ├── geography.txt
+    │   │   ├── history.txt
+    │   │   ├── math.txt.txt
+    │   │   └── science.txt
+    │   └── index/
+    │       ├── faiss.index
+    │       ├── texts.json
+    │       └── vectors.npy
+    ├── scripts/
+    │   └── run_benchmarks.sh
+    ├── src/
+    │   ├── app.py
+    │   ├── ingest.py
+    │   └── agent/
+    │       ├── __init__.py
+    │       ├── config.py
+    │       ├── controller.py
+    │       ├── graph.py
+    │       ├── llm_client.py
+    │       ├── eval/
+    │       │   ├── gsm8k_eval.py
+    │       │   ├── lama_eval.py
+    │       │   └── mixed_eval.py
+    │       ├── prompts/
+    │       │   └── controller_prompt.md
+    │       └── tools/
+    │           ├── __init__.py
+    │           ├── calculator.py
+    │           ├── gsm8k_solver.py
+    │           ├── rag.py
+    │           └── web_search.py
+    └── tests/
+        └── test_tools.py
+
 
 **Evaluation**
 
