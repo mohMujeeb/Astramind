@@ -77,12 +77,12 @@ python -m src.ingest --docs data/docs --index data/index
 python -m src.app chat "What is the capital of France?"
 
 **6) Run benchmarks**
-bash scripts/run_benchmarks.sh
-python -m src.agent.eval.lama_eval
-python -m src.agent.eval.gsm8k_eval
+- bash scripts/run_benchmarks.sh
+- python -m src.agent.eval.lama_eval
+ python -m src.agent.eval.gsm8k_eval
 
 **7) Launch Django Web App**
-python manage.py runserver
+- python manage.py runserver
 **→ Visit http://127.0.0.1:8000**
 
 **Evaluation**
