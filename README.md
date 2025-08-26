@@ -1,7 +1,7 @@
 ## AstraMind — Tool-Calling AI Agent 
 
 AstraMind is a full-stack, agentic AI system that decomposes complex user queries into subtasks and dynamically routes each step to the most appropriate tool.
-It goes beyond a prototype — featuring a Django backend, PostgreSQL memory persistence, and LangGraph orchestration — making it a deployable AI agent platform.
+It goes beyond a prototype, featuring a Django backend, PostgreSQL memory persistence, and LangGraph orchestration, making it a deployable AI agent platform.
 
 **Features**
 
@@ -87,22 +87,22 @@ python manage.py runserver
 
 **Project Layout**
 AstraMind/
-├─ benchmarks/                 # Benchmark subsets (LAMA, GSM8K, mixed)
-├─ bootcamp/agent/             # Django app: models, views, templates, static assets
-│  ├─ templates/chat/          # Frontend templates (index, landing, about)
-│  ├─ models.py                # PostgreSQL memory schema
-│  ├─ memory.py                # Memory logic
-│  ├─ views.py / urls.py       # Django views & routing
-│  └─ admin.py                 # Django admin
+├─ benchmarks/                 Benchmark subsets (LAMA, GSM8K, mixed)
+├─ bootcamp/agent/             Django app: models, views, templates, static assets
+│  ├─ templates/chat/          Frontend templates (index, landing, about)
+│  ├─ models.py                PostgreSQL memory schema
+│  ├─ memory.py                Memory logic
+│  ├─ views.py / urls.py       Django views & routing
+│  └─ admin.py                 Django admin
 ├─ data/
-│  ├─ docs/                    # Knowledge base documents
-│  └─ index/                   # FAISS vector store
-├─ scripts/                    # Benchmark runner scripts
-├─ src/agent/                  # Core agent logic
-│  ├─ tools/                   # Tool implementations (calc, web, rag, gsm8k)
-│  ├─ controller.py            # Controller logic
-│  ├─ graph.py                 # LangGraph orchestration
-│  └─ eval/                    # Evaluation scripts
+│  ├─ docs/                    Knowledge base documents
+│  └─ index/                   FAISS vector store
+├─ scripts/                    Benchmark runner scripts
+├─ src/agent/                  Core agent logic
+│  ├─ tools/                   Tool implementations (calc, web, rag, gsm8k)
+│  ├─ controller.py            Controller logic
+│  ├─ graph.py                 LangGraph orchestration
+│  └─ eval/                    Evaluation scripts
 └─ requirements.txt
 
 **Evaluation**
